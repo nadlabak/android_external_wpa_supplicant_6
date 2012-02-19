@@ -372,6 +372,17 @@ struct ieee80211_rx_status {
 struct wpa_ssid;
 
 /**
+ * struct wpa_signal_info - Information about channel signal quality
+ */
+struct wpa_signal_info {
+	u32 frequency;
+	int above_threshold;
+	int current_signal;
+	int current_noise;
+	int current_txrate;
+};
+
+/**
  * struct wpa_driver_ops - Driver interface API definition
  *
  * This structure defines the API that each driver interface needs to implement
@@ -1037,17 +1048,24 @@ struct wpa_driver_ops {
 	struct wpa_interface_info * (*get_interfaces)(void *global_priv);
 
 #ifdef ANDROID
-    /**
-     * driver_cmd - execute driver-specific command
-     * @priv: private driver interface data from init()
-     * @cmd: command to execute
-     * @buf: return buffer
-     * @buf_len: buffer length
+	/**
+	 * driver_cmd - execute driver-specific command
+	 * @priv: private driver interface data from init()
+	 * @cmd: command to execute
+	 * @buf: return buffer
+	 * @buf_len: buffer length
 	 *
 	 * Returns: 0 on success, -1 on failure
 	 *
 	 */
-     int (*driver_cmd)(void *priv, char *cmd, char *buf, size_t buf_len);
+	int (*driver_cmd)(void *priv, char *cmd, char *buf, size_t buf_len);
+
+	/**
+	 * signal_poll - Get current connection information
+	 * @priv: Private driver interface data
+	 * @signal_info: Connection info structure
+	 */
+	int (*signal_poll)(void *priv, struct wpa_signal_info *signal_info);
 #endif
 };
 

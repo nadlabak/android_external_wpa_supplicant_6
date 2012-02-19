@@ -776,5 +776,13 @@ static inline int wpa_drv_driver_cmd(struct wpa_supplicant *wpa_s,
 		return wpa_s->driver->driver_cmd(wpa_s->drv_priv, cmd, buf, buf_len);
 	return -1;
 }
+
+static inline int wpa_drv_signal_poll(struct wpa_supplicant *wpa_s,
+                                      struct wpa_signal_info *si)
+{
+	if (wpa_s->driver->signal_poll)
+		return wpa_s->driver->signal_poll(wpa_s->drv_priv, si);
+	return -1;
+}
 #endif
 #endif /* WPA_SUPPLICANT_I_H */
