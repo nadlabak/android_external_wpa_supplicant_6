@@ -818,6 +818,11 @@ static int wpa_cli_cmd_log_level(struct wpa_ctrl *ctrl, int argc, char *argv[])
 
 	return wpa_ctrl_command(ctrl, cmd);
 }
+static int wpa_cli_cmd_signal_poll(struct wpa_ctrl *ctrl, int argc,
+				   char *argv[])
+{
+	return wpa_ctrl_command(ctrl, "SIGNAL_POLL");
+}
 #endif /* ANDROID */
 
 
@@ -1294,6 +1299,9 @@ static struct wpa_cli_cmd wpa_cli_commands[] = {
 	  cli_cmd_flag_none,
 	  "<level> [<timestamp>] = update the log level/timestamp of wpa_supplicant\n"
 	  "log_level = display the current log level and log options" },
+	{ "signal_poll", wpa_cli_cmd_signal_poll,
+	  cli_cmd_flag_none,
+	  "= get signal parameters" },
 #endif
     { "list_networks", wpa_cli_cmd_list_networks,
 	  cli_cmd_flag_none,
