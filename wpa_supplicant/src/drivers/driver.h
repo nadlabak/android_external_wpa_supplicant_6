@@ -1197,7 +1197,24 @@ typedef enum wpa_event_type {
 	 * FT authentication sequence from the AP. The FT IEs are included in
 	 * the extra information in union wpa_event_data::ft_ies.
 	 */
-	EVENT_FT_RESPONSE
+	EVENT_FT_RESPONSE,
+#if 1
+	/**
+	 * EVENT_INTERFACE_ENABLED - Notify that interface was enabled
+	 *
+	 * This event is used to indicate that the interface was enabled after
+	 * having been previously disabled, e.g., due to rfkill.
+	 */
+	EVENT_INTERFACE_ENABLED = 30, /* wpa v8 backport, value is approximative */
+
+	/**
+	 * EVENT_INTERFACE_DISABLED - Notify that interface was disabled
+	 *
+	 * This event is used to indicate that the interface was disabled,
+	 * e.g., due to rfkill.
+	 */
+	EVENT_INTERFACE_DISABLED = 31, /* wpa v8 backport, value is approximative */
+#endif
 } wpa_event_type;
 
 

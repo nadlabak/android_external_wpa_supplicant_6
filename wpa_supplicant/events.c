@@ -1100,6 +1100,7 @@ wpa_supplicant_event_interface_status(struct wpa_supplicant *wpa_s,
 		wpa_supplicant_mark_disassoc(wpa_s);
 		l2_packet_deinit(wpa_s->l2);
 		wpa_s->l2 = NULL;
+		wpa_supplicant_set_state(wpa_s, WPA_INTERFACE_DISABLED);
 		break;
 	}
 }
@@ -1140,6 +1141,18 @@ void wpa_supplicant_event(void *ctx, wpa_event_type event,
 {
 	struct wpa_supplicant *wpa_s = ctx;
 
+#if 0
+	/* v8 backport, disabled until tests are done */
+
+	if (wpa_s->wpa_state == WPA_INTERFACE_DISABLED &&
+	    event != EVENT_INTERFACE_ENABLED &&
+	    event != EVENT_INTERFACE_STATUS) {
+		wpa_printf(MSG_DEBUG, "Ignore event %d while interface is "
+			"disabled", event);
+		return;
+	}
+#endif
+
 	switch (event) {
 	case EVENT_ASSOC:
 		wpa_supplicant_event_assoc(wpa_s, data);
@@ -1174,6 +1187,36 @@ void wpa_supplicant_event(void *ctx, wpa_event_type event,
 		wpa_supplicant_event_ft_response(wpa_s, data);
 		break;
 #endif /* CONFIG_IEEE80211R */
+
+/* WPA v8 backport, optional */
+
+	case EVENT_INTERFACE_ENABLED:
+		// if (!wpa_s->interface_removed) break;
+		wpa_printf(MSG_DEBUG, "Interface was enabled");
+		wpa_s->interface_removed = 0;
+
+		// ics state to check
+		if (wpa_s->wpa_state != WPA_INTERFACE_DISABLED) {
+			if (wpa_supplicant_driver_init(wpa_s) < 0) {
+				wpa_printf(MSG_WARNING, "Failed to initialize the driver "
+					"after interface was enabled.");
+			}
+		}
+		wpa_supplicant_set_state(wpa_s, WPA_DISCONNECTED);
+		wpa_supplicant_req_scan(wpa_s, 0, 0);
+		break;
+
+        case EVENT_INTERFACE_DISABLED:
+		wpa_printf(MSG_INFO, "Interface was disabled (v8 event)");
+		wpa_s->interface_removed = 1;
+		wpa_supplicant_mark_disassoc(wpa_s);
+		l2_packet_deinit(wpa_s->l2);
+		wpa_s->l2 = NULL;
+		wpa_supplicant_set_state(wpa_s, WPA_INTERFACE_DISABLED);
+		break;
+
+/* End of supplicant v8 backports */
+
 	default:
 		wpa_printf(MSG_INFO, "Unknown event %d", event);
 		break;

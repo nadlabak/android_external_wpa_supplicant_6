@@ -1730,11 +1730,17 @@ char * wpa_supplicant_ctrl_iface_process(struct wpa_supplicant *wpa_s,
 	} else if (os_strcmp(buf, "LOGOFF") == 0) {
 		eapol_sm_notify_logoff(wpa_s->eapol, TRUE);
 	} else if (os_strcmp(buf, "REASSOCIATE") == 0) {
-		wpa_s->disconnected = 0;
-		wpa_s->reassociate = 1;
-		wpa_supplicant_req_scan(wpa_s, 0, 0);
+		if (wpa_s->wpa_state == WPA_INTERFACE_DISABLED)
+			reply_len = -1;
+		else {
+			wpa_s->disconnected = 0;
+			wpa_s->reassociate = 1;
+			wpa_supplicant_req_scan(wpa_s, 0, 0);
+		}
 	} else if (os_strcmp(buf, "RECONNECT") == 0) {
-		if (wpa_s->disconnected) {
+		if (wpa_s->wpa_state == WPA_INTERFACE_DISABLED)
+			reply_len = -1;
+		else if (wpa_s->disconnected) {
 			wpa_s->disconnected = 0;
 			wpa_s->reassociate = 1;
 			wpa_supplicant_req_scan(wpa_s, 0, 0);
@@ -1804,7 +1810,9 @@ char * wpa_supplicant_ctrl_iface_process(struct wpa_supplicant *wpa_s,
 		wpa_supplicant_disassociate(wpa_s, WLAN_REASON_DEAUTH_LEAVING);
 	} else if (os_strcmp(buf, "SCAN") == 0) {
 #ifdef ANDROID
-		if (!wpa_s->scanning && ((wpa_s->wpa_state <= WPA_SCANNING) ||
+		if (wpa_s->wpa_state == WPA_INTERFACE_DISABLED)
+			reply_len = -1;
+		else if (!wpa_s->scanning && ((wpa_s->wpa_state <= WPA_SCANNING) ||
 			(wpa_s->wpa_state >= WPA_COMPLETED))) {
 #endif
 			wpa_s->scan_req = 2;

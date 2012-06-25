@@ -95,6 +95,11 @@ static void wpa_supplicant_scan(void *eloop_ctx, void *timeout_ctx)
 	wpa_printf(MSG_DEBUG, "%s: scan_req = %d, ap_scan = %d", __func__,
 		wpa_s->scan_req, wpa_s->conf->ap_scan);
 
+	if (wpa_s->wpa_state == WPA_INTERFACE_DISABLED) {
+		wpa_printf(MSG_DEBUG, "Skip scan - interface disabled");
+		return;
+	}
+
 	if (wpa_s->disconnected && !wpa_s->scan_req) {
 		wpa_supplicant_set_state(wpa_s, WPA_DISCONNECTED);
 		return;

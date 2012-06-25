@@ -448,10 +448,14 @@ const char * wpa_supplicant_state_txt(int state)
 	switch (state) {
 	case WPA_DISCONNECTED:
 		return "DISCONNECTED";
+	case WPA_INTERFACE_DISABLED:
+		return "INTERFACE_DISABLED";
 	case WPA_INACTIVE:
 		return "INACTIVE";
 	case WPA_SCANNING:
 		return "SCANNING";
+	case WPA_AUTHENTICATING:
+		return "AUTHENTICATING";
 	case WPA_ASSOCIATING:
 		return "ASSOCIATING";
 	case WPA_ASSOCIATED:
@@ -512,7 +516,7 @@ void wpa_supplicant_set_state(struct wpa_supplicant *wpa_s, wpa_states state)
 		wpa_s->reassociated_connection = 1;
 		wpa_drv_set_operstate(wpa_s, 1);
 	} else if (state == WPA_DISCONNECTED || state == WPA_ASSOCIATING ||
-		   state == WPA_ASSOCIATED) {
+		   state == WPA_INTERFACE_DISABLED || state == WPA_ASSOCIATED) {
 		wpa_s->new_connection = 1;
 		wpa_drv_set_operstate(wpa_s, 0);
 	}
