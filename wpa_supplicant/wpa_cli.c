@@ -1237,7 +1237,7 @@ static struct wpa_cli_cmd wpa_cli_commands[] = {
 	  "[ifname] = show interfaces/select interface" },
 	{ "level", wpa_cli_cmd_level,
 	  cli_cmd_flag_none,
-	  "<debug level> = change debug level" },
+	  "<debug level> = change debug level (0 = most)" },
 	{ "license", wpa_cli_cmd_license,
 	  cli_cmd_flag_none,
 	  "= show full wpa_cli license" },
