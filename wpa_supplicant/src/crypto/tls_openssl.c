@@ -888,8 +888,6 @@ struct tls_connection * tls_connection_init(void *ssl_ctx)
 	options |= SSL_OP_NO_COMPRESSION;
 #endif /* SSL_OP_NO_COMPRESSION */
 #ifdef ANDROID
-	options |= SSL_OP_NO_TLSv1_1;
-	options |= SSL_OP_NO_TLSv1_2;
 	options |= SSL_OP_NO_TICKET;
 #endif /* ANDROID */
 	SSL_set_options(conn->ssl, options);
